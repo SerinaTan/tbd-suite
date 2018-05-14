@@ -30,7 +30,7 @@ import json
 from stt_bucketing_module import STTBucketingModule
 
 # <EcoSys> Importing helper functions for CUDA profiling
-import cudaprofile
+from numba import cuda
 # </EcoSys>
 
 # <EcoSys> Throughput calculation
@@ -159,12 +159,15 @@ def do_training(args, module, data_train, data_val, begin_epoch=0):
             duration += total_duration
         # </EcoSys>
 	    # <EcoSys> Add profiler start and end point
-	    if nbatch == 501:
-                log.info('---------CUDA profile start---------')
-                cudaprofile.start()
-            if nbatch == 511:
-                log.info('---------CUDA profile stop---------')
-                cudaprofile.stop()
+            if n_epoch == args.config.get('common', 'prof_epoch'):
+                if nbatch == args.config.get('common', 'prof_start_batch'):
+                    log.info('---------CUDA profile starting---------')
+                    cuda.profile_start()
+                    log.info('---------CUDA profile started---------')
+                if nbatch == args.config.get('common', 'prof_stop_batch'):
+                    log.info('---------CUDA profile stopping---------')
+                    cuda.profile_stop()
+                    log.info('---------CUDA profile stopped---------')
 	    # </EcoSys> 
 
             module.forward_backward(data_batch)
