@@ -1,3 +1,4 @@
 tensorboard
 tensorboardX
 soundfile
+numba

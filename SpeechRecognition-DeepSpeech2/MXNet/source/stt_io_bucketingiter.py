@@ -138,9 +138,15 @@ class BucketSTTIter(mx.io.DataIter):
 
         audio_paths = []
         texts = []
+        # <EcoSys> Throughput calculation
+        total_duration = 0
+        # </EcoSys>
         for duration, audio_path, text in self.data[i][j:j+self.batch_size]:
             audio_paths.append(audio_path)
             texts.append(text)
+            # <EcoSys> Throughput calculation
+            total_duration += duration
+            # </EcoSys>
 
         if self.is_first_epoch:
             data_set = self.datagen.prepare_minibatch(audio_paths, texts, overwrite=True,
@@ -159,7 +165,9 @@ class BucketSTTIter(mx.io.DataIter):
         self.label = label_all
         provide_data = [('data', (self.batch_size, self.buckets[i], self.width * self.height))] + self.init_states
 
-        return mx.io.DataBatch(data_all, label_all, pad=0,
+        # <EcoSys> Throughput calculation
+        return (mx.io.DataBatch(data_all, label_all, pad=0,
                                bucket_key=self.buckets[i],
                                provide_data=provide_data,
-                               provide_label=self.provide_label)
+                               provide_label=self.provide_label), total_duration)
+        # </EcoSys>

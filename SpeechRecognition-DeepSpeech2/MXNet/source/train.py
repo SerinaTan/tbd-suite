@@ -30,9 +30,12 @@ import json
 from stt_bucketing_module import STTBucketingModule
 
 # <EcoSys> Importing helper functions for CUDA profiling
-import cudaprofile
+from numba import cuda
 # </EcoSys>
 
+# <EcoSys> Throughput calculation
+import time
+# </EcoSys>
 
 def get_initializer(args):
     init_type = getattr(mx.initializer, args.config.get('train', 'initializer'))
@@ -62,6 +65,9 @@ def do_training(args, module, data_train, data_val, begin_epoch=0):
 
     #seq_len = args.config.get('arch', 'max_t_count')
     batch_size = args.config.getint('common', 'batch_size')
+    # <EcoSys> Checkpoint switch
+    save_checkpoint = args.config.getboolean('common', 'save_checkpoint')
+    # </EcoSys>
     save_checkpoint_every_n_epoch = args.config.getint('common', 'save_checkpoint_every_n_epoch')
     save_checkpoint_every_n_batch = args.config.getint('common', 'save_checkpoint_every_n_batch')
     enable_logging_train_metric = args.config.getboolean('train', 'enable_logging_train_metric')
@@ -142,34 +148,55 @@ def do_training(args, module, data_train, data_val, begin_epoch=0):
 
     while True:
 
+        # <EcoSys> Throughput calculation
+        tic = time.time()
+        duration = 0
+        # </EcoSys>
+
         if n_epoch >= num_epoch:
             break
         loss_metric.reset()
         log.info('---------train---------')
-        for nbatch, data_batch in enumerate(data_train):
+        # <EcoSys> Throughput calculation
+        for nbatch, (data_batch, total_duration) in enumerate(data_train):
+            duration += total_duration
+        # </EcoSys>
 	    # <EcoSys> Add profiler start and end point
-	    if nbatch == 501:
-                log.info('---------CUDA profile start---------')
-                cudaprofile.start()
-            if nbatch == 511:
-                log.info('---------CUDA profile stop---------')
-                cudaprofile.stop()
+            if n_epoch == args.config.getint('common', 'prof_epoch'):
+                if nbatch == args.config.getint('common', 'prof_start_batch'):
+                    log.info('---------CUDA profile starting---------')
+                    cuda.profile_start()
+                    log.info('---------CUDA profile started---------')
+                if nbatch == args.config.getint('common', 'prof_stop_batch'):
+                    log.info('---------CUDA profile stopping---------')
+                    cuda.profile_stop()
+                    log.info('---------CUDA profile stopped---------')
 	    # </EcoSys> 
 
             module.forward_backward(data_batch)
             module.update()
             # tensorboard setting
             if (nbatch + 1) % show_every == 0:
+                # <EcoSys> Throughput calculation
+                log.info("Epoch[%d] Batch[%d] Throughput: %f samples/sec" % (n_epoch, nbatch+1, duration/(time.time()-tic)))
+                duration = 0
+                tic = time.time()
+                # </EcoSys>
                 module.update_metric(loss_metric, data_batch.label)
             #summary_writer.add_scalar('loss batch', loss_metric.get_batch_loss(), nbatch)
-            if (nbatch+1) % save_checkpoint_every_n_batch == 0:
+            # <EcoSys> Checkpoint switch
+            if save_checkpoint and (nbatch+1) % save_checkpoint_every_n_batch == 0:
+            # </EcoSys>
                 log.info('Epoch[%d] Batch[%d] SAVE CHECKPOINT', n_epoch, nbatch)
                 module.save_checkpoint(prefix=get_checkpoint_path(args)+"n_epoch"+str(n_epoch)+"n_batch", epoch=(int((nbatch+1)/save_checkpoint_every_n_batch)-1), save_optimizer_states=save_optimizer_states)
         # commented for Libri_sample data set to see only train cer
         log.info('---------validation---------')
         data_val.reset()
         eval_metric.reset()
-        for nbatch, data_batch in enumerate(data_val):
+
+        # <EcoSys> Throughput calculation
+        for nbatch, (data_batch, _) in enumerate(data_val):
+        # </EcoSys>
             # when is_train = False it leads to high cer when batch_norm
             module.forward(data_batch, is_train=True)
             module.update_metric(eval_metric, data_batch.label)
@@ -190,7 +217,9 @@ def do_training(args, module, data_train, data_val, begin_epoch=0):
         summary_writer.add_scalar('CER train', train_cer, n_epoch)
 
         # save checkpoints
-        if n_epoch % save_checkpoint_every_n_epoch == 0:
+        # <EcoSys> Checkpoint switch
+        if save_checkpoint and n_epoch % save_checkpoint_every_n_epoch == 0:
+        # </EcoSys>
             log.info('Epoch[%d] SAVE CHECKPOINT', n_epoch)
             module.save_checkpoint(prefix=get_checkpoint_path(args), epoch=n_epoch, save_optimizer_states=save_optimizer_states)
 

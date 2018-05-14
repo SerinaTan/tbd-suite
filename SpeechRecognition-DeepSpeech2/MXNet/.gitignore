@@ -3,3 +3,5 @@ corpus.json
 checkpoints
 log
 unicodemap_en_baidu_bi_graphemes.csv
+dataset/*.tar.gz
+source/tblog
