@@ -33,6 +33,9 @@ from stt_bucketing_module import STTBucketingModule
 import cudaprofile
 # </EcoSys>
 
+# <EcoSys> Throughput calculation
+import time
+# </EcoSys>
 
 def get_initializer(args):
     init_type = getattr(mx.initializer, args.config.get('train', 'initializer'))
@@ -140,13 +143,21 @@ def do_training(args, module, data_train, data_val, begin_epoch=0):
     tblog_dir = args.config.get('common', 'tensorboard_log_dir')
     summary_writer = SummaryWriter(tblog_dir)
 
+    # <EcoSys> Throughput calculation
+    tic = time.time()
+    duration = 0
+    # </EcoSys>
+
     while True:
 
         if n_epoch >= num_epoch:
             break
         loss_metric.reset()
         log.info('---------train---------')
-        for nbatch, data_batch in enumerate(data_train):
+        # <EcoSys> Throughput calculation
+        for nbatch, (data_batch, total_duration) in enumerate(data_train):
+            duration += total_duration
+        # </EcoSys>
 	    # <EcoSys> Add profiler start and end point
 	    if nbatch == 501:
                 log.info('---------CUDA profile start---------')
@@ -160,6 +171,11 @@ def do_training(args, module, data_train, data_val, begin_epoch=0):
             module.update()
             # tensorboard setting
             if (nbatch + 1) % show_every == 0:
+                # <EcoSys> Throughput calculation
+                log.info("Epoch[%d] Batch[%d] Throughput: %f samples/sec" % (n_epoch, nbatch+1, duration/(time.time()-tic)))
+                duration = 0
+                tic = time.time()
+                # </EcoSys>
                 module.update_metric(loss_metric, data_batch.label)
             #summary_writer.add_scalar('loss batch', loss_metric.get_batch_loss(), nbatch)
             if (nbatch+1) % save_checkpoint_every_n_batch == 0:
@@ -169,7 +185,10 @@ def do_training(args, module, data_train, data_val, begin_epoch=0):
         log.info('---------validation---------')
         data_val.reset()
         eval_metric.reset()
-        for nbatch, data_batch in enumerate(data_val):
+
+        # <EcoSys> Throughput calculation
+        for nbatch, (data_batch, _) in enumerate(data_val):
+        # </EcoSys>
             # when is_train = False it leads to high cer when batch_norm
             module.forward(data_batch, is_train=True)
             module.update_metric(eval_metric, data_batch.label)
