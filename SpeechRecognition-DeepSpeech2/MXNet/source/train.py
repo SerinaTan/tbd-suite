@@ -65,6 +65,9 @@ def do_training(args, module, data_train, data_val, begin_epoch=0):
 
     #seq_len = args.config.get('arch', 'max_t_count')
     batch_size = args.config.getint('common', 'batch_size')
+    # <EcoSys> Checkpoint switch
+    save_checkpoint = args.config.getboolean('common', 'save_checkpoint')
+    # </EcoSys>
     save_checkpoint_every_n_epoch = args.config.getint('common', 'save_checkpoint_every_n_epoch')
     save_checkpoint_every_n_batch = args.config.getint('common', 'save_checkpoint_every_n_batch')
     enable_logging_train_metric = args.config.getboolean('train', 'enable_logging_train_metric')
@@ -181,7 +184,9 @@ def do_training(args, module, data_train, data_val, begin_epoch=0):
                 # </EcoSys>
                 module.update_metric(loss_metric, data_batch.label)
             #summary_writer.add_scalar('loss batch', loss_metric.get_batch_loss(), nbatch)
-            if (nbatch+1) % save_checkpoint_every_n_batch == 0:
+            # <EcoSys> Checkpoint switch
+            if save_checkpoint and (nbatch+1) % save_checkpoint_every_n_batch == 0:
+            # </EcoSys>
                 log.info('Epoch[%d] Batch[%d] SAVE CHECKPOINT', n_epoch, nbatch)
                 module.save_checkpoint(prefix=get_checkpoint_path(args)+"n_epoch"+str(n_epoch)+"n_batch", epoch=(int((nbatch+1)/save_checkpoint_every_n_batch)-1), save_optimizer_states=save_optimizer_states)
         # commented for Libri_sample data set to see only train cer
@@ -212,7 +217,9 @@ def do_training(args, module, data_train, data_val, begin_epoch=0):
         summary_writer.add_scalar('CER train', train_cer, n_epoch)
 
         # save checkpoints
-        if n_epoch % save_checkpoint_every_n_epoch == 0:
+        # <EcoSys> Checkpoint switch
+        if save_checkpoint and n_epoch % save_checkpoint_every_n_epoch == 0:
+        # </EcoSys>
             log.info('Epoch[%d] SAVE CHECKPOINT', n_epoch)
             module.save_checkpoint(prefix=get_checkpoint_path(args), epoch=n_epoch, save_optimizer_states=save_optimizer_states)
 

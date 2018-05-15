@@ -67,6 +67,8 @@ _DeepSpeech2_ is the benchmark on Speech Recognition
 
 ## DeepSpeech 2 - Changelog
 
+* [Switch for checkpointing.](./source/train.py#L68)
+
 * [Change from tensorboard to tensorboardX.](./source/train.py#L26)
 
 * [Importing helper functions for CUDA profiling.](./source/train.py#L32)
