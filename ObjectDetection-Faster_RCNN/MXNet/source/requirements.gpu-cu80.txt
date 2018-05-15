@@ -1,4 +1,5 @@
-mxnet-cu80==0.11.0
+mxnet-cu90
+mxnet-cu90
 cython
 scikit-image
 easydict
