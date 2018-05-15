@@ -1,0 +1,7 @@
+mxnet-cu90
+cython
+scikit-image
+easydict
+matplotlib
+opencv-python
+future

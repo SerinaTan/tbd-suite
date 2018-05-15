@@ -1,0 +1,7 @@
+mxnet-cu90
+gym
+atari-py
+PyOpenGL
+flask
+opencv-python
+numba
