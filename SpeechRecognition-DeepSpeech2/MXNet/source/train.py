@@ -146,12 +146,12 @@ def do_training(args, module, data_train, data_val, begin_epoch=0):
     tblog_dir = args.config.get('common', 'tensorboard_log_dir')
     summary_writer = SummaryWriter(tblog_dir)
 
-    # <EcoSys> Throughput calculation
-    tic = time.time()
-    duration = 0
-    # </EcoSys>
-
     while True:
+
+        # <EcoSys> Throughput calculation
+        tic = time.time()
+        duration = 0
+        # </EcoSys>
 
         if n_epoch >= num_epoch:
             break
