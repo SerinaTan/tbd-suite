@@ -565,6 +565,18 @@ def add_training_args(params):
                               default=-1,
                               help='Keep only the last n params files, use -1 to keep all files. Default: %(default)s')
 
+# <EcoSys> Parametrizing profiler
+def add_profiling_args(params):
+    decode_params = params.add_argument_group("Profiling parameters")
+
+    decode_params.add_argument("--profiler-epoch", default=-1,
+                                help='Epoch on which profiler need to be started')
+    decode_params.add_argument("--profiler-start", default=500,
+                                help='Batch on which profiler need to be started')
+    decode_params.add_argument("--profiler-stop", default=600,
+                                help='Batch on which profiler need to be stopped')
+# </EcoSys>
+
 
 def add_inference_args(params):
     decode_params = params.add_argument_group("Inference parameters")
