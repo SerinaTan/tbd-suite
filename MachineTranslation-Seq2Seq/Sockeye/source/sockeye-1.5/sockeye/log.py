@@ -53,7 +53,7 @@ CONSOLE_LOGGING = {
     'handlers': {
         'console': {
             'level': 'INFO',
-            'formatter': 'simple',
+            'formatter': 'verbose',
             'class': 'logging.StreamHandler',
             'stream': None
         },
@@ -71,7 +71,7 @@ FILE_CONSOLE_LOGGING = {
     'handlers': {
         'console': {
             'level': 'INFO',
-            'formatter': 'simple',
+            'formatter': 'verbose',
             'class': 'logging.StreamHandler',
             'stream': None
         },
