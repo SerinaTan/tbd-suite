@@ -40,6 +40,8 @@ archivePrefix = "arXiv",
 
 ## Sockeye 1.5 - Changelog
 
+* [Parametrizing profiler.](./source/sockeye-1.5/sockeye/arguments.py#L568)
+
 * [Changed the beam size from 5 to 10.](./source/sockeye-1.5/sockeye/constants.py#L133)
 
 * [Changed the measurement frequency from 50 to 100 updates.](./source/sockeye-1.5/sockeye/constants.py#L119)

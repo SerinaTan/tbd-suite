@@ -172,6 +172,11 @@ class TrainingModel(model.SockeyeModel):
             monitor_bleu: int = 0,
             use_tensorboard: bool = False,
             mxmonitor_pattern: Optional[str] = None,
+            # <EcoSys> Parametrizing profiler
+            profiler_epoch: int = -1,
+            profiler_start: int = 500,
+            profiler_stop: int = 600,
+            # </EcoSys>
             mxmonitor_stat_func: Optional[str] = None):
         """
         Fits model to data given by train_iter using early-stopping w.r.t data given by val_iter.
@@ -243,6 +248,11 @@ class TrainingModel(model.SockeyeModel):
                   checkpoint_frequency=checkpoint_frequency,
                   max_num_not_improved=max_num_not_improved,
                   min_num_epochs=min_num_epochs,
+                  # <EcoSys> Parametrizing profiler
+                  profiler_epoch=profiler_epoch,
+                  profiler_start=profiler_start,
+                  profiler_stop=profiler_stop,
+                  # </EcoSys>
                   mxmonitor=monitor)
 
         logger.info("Training finished. Best checkpoint: %d. Best validation %s: %.6f",
@@ -261,6 +271,11 @@ class TrainingModel(model.SockeyeModel):
              checkpoint_frequency: int,
              max_num_not_improved: int,
              min_num_epochs: Optional[int] = None,
+             # <EcoSys> Parametrizing profiler
+             profiler_epoch: int = -1,
+             profiler_start: int = 500,
+             profiler_stop: int = 600,
+             # </EcoSys>
              mxmonitor: Optional[mx.monitor.Monitor] = None):
         """
         Internal fit method. Runtime determined by early stopping.
@@ -299,12 +314,13 @@ class TrainingModel(model.SockeyeModel):
         while max_updates == -1 or train_state.updates < max_updates:
 
             # <EcoSys> Added the profiler start and end point.
-            import numba.cuda as cuda
+            if train_state.epoch == profiler_epoch:
+                import numba.cuda as cuda
 
-            if train_state.updates == 501:
-                cuda.profile_start()
-            if train_state.updates == 511:
-                cuda.profile_stop()
+                if train_state.updates == profiler_start:
+                    cuda.profile_start()
+                if train_state.updates == profiler_stop:
+                    cuda.profile_stop()
             # </EcoSys>
 
             if not train_iter.iter_next():

@@ -91,6 +91,9 @@ def main():
     arguments.add_model_parameters(params)
     arguments.add_training_args(params)
     arguments.add_device_args(params)
+    # <EcoSys> Parametrizing profiler
+    arguments.add_profiling_args(params)
+    # </EcoSys>
     args = params.parse_args()
 
     # seed the RNGs
@@ -416,6 +419,11 @@ def main():
                            monitor_bleu=args.monitor_bleu,
                            use_tensorboard=args.use_tensorboard,
                            mxmonitor_pattern=args.monitor_pattern,
+                           # <EcoSys> Parametrizing profiler
+                           profiler_epoch=args.profiler_epoch,
+                           profiler_start=args.profiler_start,
+                           profiler_stop=args.profiler_stop,
+                           # </EcoSys>
                            mxmonitor_stat_func=args.monitor_stat_func)
 
 

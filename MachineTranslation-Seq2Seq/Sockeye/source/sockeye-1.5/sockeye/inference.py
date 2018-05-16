@@ -565,7 +565,7 @@ class Translator:
                 scores = (scores + scores_accumulated * lengths) / (lengths + 1)
                 # ... but not for finished hyps.
                 # their predicted distribution is set to their accumulated scores at C.PAD_ID.
-                self.pad_dist[:, C.PAD_ID] = scores_accumulated
+                self.pad_dist[:, C.PAD_ID] = scores_accumulated[:, 0]
                 # this is equivalent to doing this in numpy:
                 #   self.pad_dist[finished, :] = np.inf
                 #   self.pad_dist[finished, C.PAD_ID] = scores_accumulated[finished]
@@ -586,8 +586,8 @@ class Translator:
             attentions = mx.nd.take(attentions, best_hyp_indices)
 
             # (5) update best hypotheses, their attention lists and lengths (only for non-finished hyps)
-            sequences[:, t] = mx.nd.expand_dims(best_word_indices, axis=1)
-            attentions[:, t, :] = mx.nd.expand_dims(attention_scores, axis=1)
+            sequences[:, t] = best_word_indices
+            attentions[:, t, :] = attention_scores
             lengths += mx.nd.cast(1 - mx.nd.expand_dims(finished, axis=1), dtype='float32')
 
             # (6) determine which hypotheses in the beam are now finished

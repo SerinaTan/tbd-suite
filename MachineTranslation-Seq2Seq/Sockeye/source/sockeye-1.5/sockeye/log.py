@@ -19,7 +19,6 @@ from typing import Optional
 FORMATTERS = {
     'verbose': {
         'format': '[%(asctime)s:%(levelname)s:%(name)s:%(funcName)s] %(message)s',
-        'datefmt': "%Y-%m-%d:%H:%M:%S",
     },
     'simple': {
         'format': '[%(levelname)s:%(name)s] %(message)s'
@@ -53,7 +52,7 @@ CONSOLE_LOGGING = {
     'handlers': {
         'console': {
             'level': 'INFO',
-            'formatter': 'simple',
+            'formatter': 'verbose',
             'class': 'logging.StreamHandler',
             'stream': None
         },
@@ -71,7 +70,7 @@ FILE_CONSOLE_LOGGING = {
     'handlers': {
         'console': {
             'level': 'INFO',
-            'formatter': 'simple',
+            'formatter': 'verbose',
             'class': 'logging.StreamHandler',
             'stream': None
         },

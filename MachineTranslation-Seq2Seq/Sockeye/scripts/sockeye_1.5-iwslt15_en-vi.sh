@@ -49,5 +49,6 @@ $PREFIX python3 -m sockeye.train --source $SOCKEYE_ROOT/dataset/iwslt15_en-vi/tr
                                  --max-num-checkpoint-not-improved 80 \
                                  --weight-init uniform --weight-init-scale 0.1 \
                                  --learning-rate-reduce-factor 1.0 \
+                                 --profiler-epoch 0
                                  --monitor-bleu -1 $MAX_UPDATES
 
