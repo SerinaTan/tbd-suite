@@ -9,4 +9,4 @@ class TimeMonitor(tf.contrib.learn.monitors.EveryN):
 		self.ended = False
 
 	def every_n_step_begin(self, step):
-		print("Time: ", datetime.datetime.now().strftime('%Y-%m-%d-%X '))
+		tf.logging.info("Time: %s" % datetime.datetime.now().strftime('%Y-%m-%d-%X '))

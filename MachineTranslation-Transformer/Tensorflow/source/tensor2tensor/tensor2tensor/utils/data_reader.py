@@ -106,7 +106,7 @@ def input_pipeline(problem,
         hparams=hparams,
         dataset_split=dataset_split,
         shard=shard)
-    dataset = dataset.map(cast_int64_to_int32, num_threads=num_threads)
+    dataset = dataset.map(cast_int64_to_int32, num_parallel_calls=num_threads)
     dataset = dataset.filter(
         functools.partial(
             example_valid_size,
