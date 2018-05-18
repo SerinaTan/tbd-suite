@@ -176,9 +176,9 @@ def create_experiment(data_dir, model_name, train_steps, eval_steps, hparams,
   
   # <EcoSys> Profile Hook. The overhead is low, so there is no need to 
   # disable this during a non-profiling run.
-  if tf.flags.profiler_on:
+  if FLAGS.profiler_on:
     print("Adding ProfileMonitor to list of train monitors.")
-    train_monitors.append(ProfileMonitor(tf.flags.profiler_start, tf.flags.profiler_stop))
+    train_monitors.append(ProfileMonitor(FLAGS.profiler_start, FLAGS.profiler_stop))
   # </EcoSys>
 
   if FLAGS.schedule == "train_and_evaluate":
