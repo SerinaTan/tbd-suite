@@ -99,6 +99,12 @@ flags.DEFINE_integer("save_checkpoints_secs", 0,
 flags.DEFINE_bool("log_device_placement", False,
                   "Whether to log device placement.")
 
+# <EcoSys> Parametrize profiler
+flags.DEFINE_bool("profiler_on", False, "Switch on profiler")
+flags.DEFINE_integer("profiler_start", 500, "Step at which to start profiling")
+flags.DEFINE_integer("profiler_stop", 600, "Step at which to stop profiling")
+# </EcoSys>
+
 # Distributed training flags
 flags.DEFINE_integer("local_eval_frequency", 2000,
                      "Run evaluation every this steps during local training.")
@@ -170,8 +176,9 @@ def create_experiment(data_dir, model_name, train_steps, eval_steps, hparams,
   
   # <EcoSys> Profile Hook. The overhead is low, so there is no need to 
   # disable this during a non-profiling run.
-  print("Adding ProfileMonitor to list of train monitors.")
-  train_monitors.append(ProfileMonitor())
+  if tf.flags.profiler_on:
+    print("Adding ProfileMonitor to list of train monitors.")
+    train_monitors.append(ProfileMonitor(tf.flags.profiler_start, tf.flags.profiler_stop))
   # </EcoSys>
 
   if FLAGS.schedule == "train_and_evaluate":
