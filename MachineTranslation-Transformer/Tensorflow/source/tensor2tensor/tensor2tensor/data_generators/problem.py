@@ -381,7 +381,7 @@ class Problem(object):
         data_filepattern)
     if shuffle_files or shuffle_files is None and is_training:
       random.shuffle(data_files)
-    dataset = tf.contrib.data.TFRecordDataset(data_files)
+    dataset = tf.data.TFRecordDataset(data_files)
 
     def decode_record(record):
       """Serialized Example to dict of <feature name, Tensor>."""
@@ -398,13 +398,12 @@ class Problem(object):
       self.maybe_copy_features(example)
       return example
 
-    dataset = dataset.map(decode_record, num_threads=num_threads)
+    dataset = dataset.map(decode_record, num_parallel_calls=num_threads)
 
     if preprocess:
       dataset = dataset.map(
           _preprocess,
-          num_threads=num_threads,
-          output_buffer_size=output_buffer_size)
+          num_parallel_calls=num_threads).prefetch(output_buffer_size)
 
     return dataset
 
