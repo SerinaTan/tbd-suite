@@ -62,8 +62,8 @@ def create_train_model(
     src_vocab_table, tgt_vocab_table = vocab_utils.create_vocab_tables(
         src_vocab_file, tgt_vocab_file, hparams.share_vocab)
 
-    src_dataset = tf.contrib.data.TextLineDataset(src_file)
-    tgt_dataset = tf.contrib.data.TextLineDataset(tgt_file)
+    src_dataset = tf.data.TextLineDataset(src_file)
+    tgt_dataset = tf.data.TextLineDataset(tgt_file)
     skip_count_placeholder = tf.placeholder(shape=(), dtype=tf.int64)
 
     iterator = iterator_utils.get_iterator(
@@ -118,8 +118,8 @@ def create_eval_model(model_creator, hparams, scope=None, single_cell_fn=None):
         src_vocab_file, tgt_vocab_file, hparams.share_vocab)
     src_file_placeholder = tf.placeholder(shape=(), dtype=tf.string)
     tgt_file_placeholder = tf.placeholder(shape=(), dtype=tf.string)
-    src_dataset = tf.contrib.data.TextLineDataset(src_file_placeholder)
-    tgt_dataset = tf.contrib.data.TextLineDataset(tgt_file_placeholder)
+    src_dataset = tf.data.TextLineDataset(src_file_placeholder)
+    tgt_dataset = tf.data.TextLineDataset(tgt_file_placeholder)
     iterator = iterator_utils.get_iterator(
         src_dataset,
         tgt_dataset,
@@ -414,9 +414,9 @@ def train(hparams, scope=None, target_session="", single_cell_fn=None):
       speed_samples_per_sec = checkpoint_total_samples / (step_time)
 
       utils.print_out(
-          "  global step %d lr %g "
+          "[%f] global step %d lr %g "
           "step-time %.2fs wps %.2fK sps %5.2f ppl %.2f %s" %
-          (global_step,
+          (time.time(), global_step,
            loaded_train_model.learning_rate.eval(session=train_sess),
            avg_step_time, speed, speed_samples_per_sec, 
            train_ppl, _get_best_results(hparams)), log_f)
