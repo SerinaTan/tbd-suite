@@ -18,6 +18,6 @@
 import logging
 
 # set up logger
-logging.basicConfig()
+logging.basicConfig(format='[%(asctime)-15s] %(message)s')
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
