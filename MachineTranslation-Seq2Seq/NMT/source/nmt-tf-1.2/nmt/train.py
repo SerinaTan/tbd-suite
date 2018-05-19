@@ -414,9 +414,9 @@ def train(hparams, scope=None, target_session="", single_cell_fn=None):
       speed_samples_per_sec = checkpoint_total_samples / (step_time)
 
       utils.print_out(
-          "  global step %d lr %g "
+          "[%f] global step %d lr %g "
           "step-time %.2fs wps %.2fK sps %5.2f ppl %.2f %s" %
-          (global_step,
+          (time.time(), global_step,
            loaded_train_model.learning_rate.eval(session=train_sess),
            avg_step_time, speed, speed_samples_per_sec, 
            train_ppl, _get_best_results(hparams)), log_f)
