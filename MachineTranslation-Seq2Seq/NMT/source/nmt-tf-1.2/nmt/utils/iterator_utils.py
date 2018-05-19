@@ -103,7 +103,7 @@ def get_iterator(src_dataset,
       tgt_vocab_table.lookup(tf.constant(eos)),
       tf.int32)
 
-  src_tgt_dataset = tf.contrib.data.Dataset.zip((src_dataset, tgt_dataset))
+  src_tgt_dataset = tf.data.Dataset.zip((src_dataset, tgt_dataset))
 
   if skip_count is not None:
     src_tgt_dataset = src_tgt_dataset.skip(skip_count)
@@ -114,8 +114,7 @@ def get_iterator(src_dataset,
   src_tgt_dataset = src_tgt_dataset.map(
       lambda src, tgt: (
           tf.string_split([src]).values, tf.string_split([tgt]).values),
-      num_threads=num_threads,
-      output_buffer_size=output_buffer_size)
+      num_parallel_calls=num_threads).prefetch(output_buffer_size)
 
   # Filter zero length input sequences.
   src_tgt_dataset = src_tgt_dataset.filter(
@@ -124,36 +123,32 @@ def get_iterator(src_dataset,
   if src_max_len:
     src_tgt_dataset = src_tgt_dataset.map(
         lambda src, tgt: (src[:src_max_len], tgt),
-        num_threads=num_threads,
-        output_buffer_size=output_buffer_size)
+        num_parallel_calls=num_threads).prefetch(output_buffer_size)
   if tgt_max_len:
     src_tgt_dataset = src_tgt_dataset.map(
         lambda src, tgt: (src, tgt[:tgt_max_len]),
-        num_threads=num_threads,
-        output_buffer_size=output_buffer_size)
+        num_parallel_calls=num_threads).prefetch(output_buffer_size)
   if source_reverse:
     src_tgt_dataset = src_tgt_dataset.map(
         lambda src, tgt: (tf.reverse(src, axis=[0]), tgt),
-        num_threads=num_threads,
-        output_buffer_size=output_buffer_size)
+        num_parallel_calls=num_threads).prefetch(output_buffer_size)
   # Convert the word strings to ids.  Word strings that are not in the
   # vocab get the lookup table's default_value integer.
   src_tgt_dataset = src_tgt_dataset.map(
       lambda src, tgt: (tf.cast(src_vocab_table.lookup(src), tf.int32),
                         tf.cast(tgt_vocab_table.lookup(tgt), tf.int32)),
-      num_threads=num_threads, output_buffer_size=output_buffer_size)
+      num_parallel_calls=num_threads).prefetch(output_buffer_size)
   # Create a tgt_input prefixed with <sos> and a tgt_output suffixed with <eos>.
   src_tgt_dataset = src_tgt_dataset.map(
       lambda src, tgt: (src,
                         tf.concat(([tgt_sos_id], tgt), 0),
                         tf.concat((tgt, [tgt_eos_id]), 0)),
-      num_threads=num_threads, output_buffer_size=output_buffer_size)
+      num_parallel_calls=num_threads).prefetch(output_buffer_size)
   # Add in sequence lengths.
   src_tgt_dataset = src_tgt_dataset.map(
       lambda src, tgt_in, tgt_out: (
           src, tgt_in, tgt_out, tf.size(src), tf.size(tgt_in)),
-      num_threads=num_threads,
-      output_buffer_size=output_buffer_size)
+      num_parallel_calls=num_threads).prefetch(output_buffer_size)
   # Bucket by source sequence length (buckets for lengths 0-9, 10-19, ...)
   def batching_func(x):
     return x.padded_batch(
@@ -191,8 +186,8 @@ def get_iterator(src_dataset,
       return tf.to_int64(tf.minimum(num_buckets, bucket_id))
     def reduce_func(unused_key, windowed_data):
       return batching_func(windowed_data)
-    batched_dataset = src_tgt_dataset.group_by_window(
-        key_func=key_func, reduce_func=reduce_func, window_size=batch_size)
+    batched_dataset = src_tgt_dataset.apply(tf.contrib.data.group_by_window(
+        key_func=key_func, reduce_func=reduce_func, window_size=batch_size))
   else:
     batched_dataset = batching_func(src_tgt_dataset)
   batched_iter = batched_dataset.make_initializable_iterator()

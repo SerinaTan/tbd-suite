@@ -62,8 +62,8 @@ def create_train_model(
     src_vocab_table, tgt_vocab_table = vocab_utils.create_vocab_tables(
         src_vocab_file, tgt_vocab_file, hparams.share_vocab)
 
-    src_dataset = tf.contrib.data.TextLineDataset(src_file)
-    tgt_dataset = tf.contrib.data.TextLineDataset(tgt_file)
+    src_dataset = tf.data.TextLineDataset(src_file)
+    tgt_dataset = tf.data.TextLineDataset(tgt_file)
     skip_count_placeholder = tf.placeholder(shape=(), dtype=tf.int64)
 
     iterator = iterator_utils.get_iterator(
@@ -118,8 +118,8 @@ def create_eval_model(model_creator, hparams, scope=None, single_cell_fn=None):
         src_vocab_file, tgt_vocab_file, hparams.share_vocab)
     src_file_placeholder = tf.placeholder(shape=(), dtype=tf.string)
     tgt_file_placeholder = tf.placeholder(shape=(), dtype=tf.string)
-    src_dataset = tf.contrib.data.TextLineDataset(src_file_placeholder)
-    tgt_dataset = tf.contrib.data.TextLineDataset(tgt_file_placeholder)
+    src_dataset = tf.data.TextLineDataset(src_file_placeholder)
+    tgt_dataset = tf.data.TextLineDataset(tgt_file_placeholder)
     iterator = iterator_utils.get_iterator(
         src_dataset,
         tgt_dataset,
