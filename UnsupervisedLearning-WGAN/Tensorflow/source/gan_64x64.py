@@ -612,6 +612,9 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
     # Train loop
     session.run(tf.initialize_all_variables())
     gen = inf_train_gen()
+    # <EcoSys> Throughput measurement
+    prev_iter = 0
+    # </EcoSys>
     for iteration in xrange(ITERS):
 
         start_time = time.time()
@@ -642,6 +645,10 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
             if MODE == 'wgan':
                 _ = session.run([clip_disc_weights])
 
+        # <EcoSys> Throughput measurement
+        lib.plot.plot('throughput', BATCH_SIZE*(iteration-prev_iter)/(time.time() - start_time))
+        prev_iter = iteration
+        # </EcoSys>
         lib.plot.plot('train disc cost', _disc_cost)
         lib.plot.plot('time', time.time() - start_time)
         lib.plot.plot('wall_time', time.time())
