@@ -41,6 +41,14 @@ OUTPUT_DIM = 64*64*3 # Number of pixels in each iamge
 
 lib.print_model_settings(locals().copy())
 
+# <EcoSys> Parametrize profiler
+FLAGS = tf.flags.FLAGS
+
+tf.flags.DEFINE_bool("profiler_on", False, "Switch on profiler")
+tf.flags.DEFINE_integer("profiler_start", 500, "Step at which to start profiling")
+tf.flags.DEFINE_integer("profiler_stop", 600, "Step at which to stop profiling")
+# </EcoSys>
+
 def GeneratorAndDiscriminator():
     """
     Choose which generator and discriminator architecture to use by
@@ -604,18 +612,22 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
     # Train loop
     session.run(tf.initialize_all_variables())
     gen = inf_train_gen()
+    # <EcoSys> Throughput measurement
+    prev_iter = 0
+    # </EcoSys>
     for iteration in xrange(ITERS):
 
         start_time = time.time()
 
 	# <EcoSys> Added this profiling check.
-	if iteration == 320:
-		print("Profile start.")
-		cuda.profile_start()
-	elif iteration == 325:
-		print("Calling profile_stop().")
-		cuda.profile_stop()
-		print("Done calling profile_stop().")
+        if FLAGS.profiler_on:
+            if iteration == FLAGS.profiler_start:
+                print("Profile start.")
+                cuda.profile_start()
+            elif iteration == FLAGS.profiler_stop:
+                print("Calling profile_stop().")
+                cuda.profile_stop()
+                print("Done calling profile_stop().")
 	# </EcoSys>
 
         # Train generator
@@ -633,6 +645,10 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
             if MODE == 'wgan':
                 _ = session.run([clip_disc_weights])
 
+        # <EcoSys> Throughput measurement
+        lib.plot.plot('throughput', BATCH_SIZE*(iteration-prev_iter)/(time.time() - start_time))
+        prev_iter = iteration
+        # </EcoSys>
         lib.plot.plot('train disc cost', _disc_cost)
         lib.plot.plot('time', time.time() - start_time)
         lib.plot.plot('wall_time', time.time())
