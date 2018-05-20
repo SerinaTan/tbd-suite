@@ -150,6 +150,8 @@ def train():
     score = np.zeros((args.batch_size, 1))
     final_score = np.zeros((args.batch_size, 1))
     iteration = 0
+    tic = time.time()
+    samples = 0
     for epoch in range(args.num_epochs):
         if save_model_prefix:
             module.save_params('%s-%04d.params'%(save_model_prefix, epoch))
@@ -167,8 +169,6 @@ def train():
                 print("Done calling profile_stop().")
             # </EcoSys>
 
-            tic = time.time()
-            samples = 0
             # clear gradients
             for exe in module._exec_group.grad_arrays:
                 for g in exe:
@@ -206,8 +206,6 @@ def train():
                 out_acts_tile=np.tile(-np.log(out_acts + 1e-7),(1, dataiter.act_dim))
                 module.backward([mx.nd.array(out_acts_tile*adv), h])
 
-                print('pi', pi[0].asnumpy())
-                print('h', h[0].asnumpy())
                 err += (adv**2).mean()
                 score += r[i]
                 final_score *= (1-D[i])
@@ -216,9 +214,11 @@ def train():
                 T += D[i].sum()
 
             module.update()
-            logging.info('fps: %f err: %f score: %f final: %f T: %f Throughput: %f K/sec'%(args.batch_size/(time.time()-tic), err/args.t_max, score.mean(), final_score.mean(), T, (samples*0.001)/(time.time()-tic)))
-            print(score.squeeze())
-            print(final_score.squeeze())
+
+            if iteration%100 == 99:
+                logging.info('fps: %f err: %f score: %f final: %f T: %f Throughput: %f K/sec'%(args.batch_size/(time.time()-tic), err/args.t_max, score.mean(), final_score.mean(), T, (samples*0.001)/(time.time()-tic)))
+                tic = time.time()
+                samples = 0
             iteration += 1
 
 def test():
