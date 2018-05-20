@@ -168,6 +168,7 @@ def train():
             # </EcoSys>
 
             tic = time.time()
+            samples = 0
             # clear gradients
             for exe in module._exec_group.grad_arrays:
                 for g in exe:
@@ -176,6 +177,7 @@ def train():
             S, A, V, r, D = [], [], [], [], []
             for t in range(args.t_max + 1):
                 data = dataiter.data()
+                samples+= sum([len(s) for s in data[0]])
                 module.forward(mx.io.DataBatch(data=data, label=None), is_train=False)
                 act, _, val = module.get_outputs()
                 V.append(val.asnumpy())
@@ -214,7 +216,7 @@ def train():
                 T += D[i].sum()
 
             module.update()
-            logging.info('fps: %f err: %f score: %f final: %f T: %f'%(args.batch_size/(time.time()-tic), err/args.t_max, score.mean(), final_score.mean(), T))
+            logging.info('fps: %f err: %f score: %f final: %f T: %f Throughput: %f K/sec'%(args.batch_size/(time.time()-tic), err/args.t_max, score.mean(), final_score.mean(), T, (samples*0.001)/(time.time()-tic)))
             print(score.squeeze())
             print(final_score.squeeze())
             iteration += 1
