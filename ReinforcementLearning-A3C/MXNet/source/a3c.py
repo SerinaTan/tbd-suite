@@ -216,7 +216,7 @@ def train():
             module.update()
 
             if iteration%100 == 99:
-                logging.info('fps: %f err: %f score: %f final: %f T: %f Throughput: %f K/sec'%(args.batch_size/(time.time()-tic), err/args.t_max, score.mean(), final_score.mean(), T, (samples*0.001)/(time.time()-tic)))
+                logging.info('err: %f score: %f final: %f T: %f Throughput: %f K/sec'%(err/args.t_max, score.mean(), final_score.mean(), T, (samples*0.001)/(time.time()-tic)))
                 tic = time.time()
                 samples = 0
             iteration += 1
