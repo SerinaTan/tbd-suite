@@ -4,3 +4,4 @@ atari-py
 PyOpenGL
 flask
 opencv-python
+numba
