@@ -6,7 +6,7 @@ DS2_ROOT=$(cd $(dirname $0)/.. && pwd)
 
 if [[ -z "$1" ]]
 then
-	echo "Usage: ./download-librispeech.sh [train-clean-100|train-clean-360|traing-clean-500]"
+	echo "Usage: ./download-librispeech.sh [train-clean-100|train-clean-360|train-other-500]"
 	exit -1
 fi
 
