@@ -115,7 +115,7 @@ def train():
         kv = None
 
     # module
-    dataiter = rl_data.GymDataIter('Breakout-v0', args.batch_size, args.input_length, web_viz=True)
+    dataiter = rl_data.GymDataIter('Pong-v0', args.batch_size, args.input_length, web_viz=True)
     net = sym.get_symbol_atari(dataiter.act_dim)
     module = mx.mod.Module(net, data_names=[d[0] for d in dataiter.provide_data], label_names=('policy_label', 'value_label'), context=devs)
     module.bind(data_shapes=dataiter.provide_data,
