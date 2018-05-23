@@ -317,9 +317,9 @@ class TrainingModel(model.SockeyeModel):
             if train_state.epoch == profiler_epoch:
                 import numba.cuda as cuda
 
-                if train_state.updates == profile_start:
+                if train_state.updates == profiler_start:
                     cuda.profile_start()
-                if train_state.updates == profile_stop:
+                if train_state.updates == profiler_stop:
                     cuda.profile_stop()
             # </EcoSys>
 
