@@ -176,6 +176,7 @@ def train():
                 mx.profiler.dump_profile()
                 cuda.profile_stop()
                 print("Done calling profile_stop().")
+                exit()
             # </EcoSys>
 
             # clear gradients

@@ -328,6 +328,7 @@ class TrainingModel(model.SockeyeModel):
                     mx.profiler.profiler_set_state('stop')
                     mx.profiler.dump_profile()
                     cuda.profile_stop()
+                    exit()
             # </EcoSys>
 
             if not train_iter.iter_next():

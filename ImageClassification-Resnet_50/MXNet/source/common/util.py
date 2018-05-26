@@ -103,5 +103,6 @@ class cudaProfilerStop(object):
             mx.profiler.profiler_set_state('stop')
             mx.profiler.dump_profile()
             cuda.profile_stop()
+            exit()
 
 # </EcoSys>

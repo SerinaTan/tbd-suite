@@ -180,6 +180,7 @@ def do_training(args, module, data_train, data_val, begin_epoch=0):
                     mx.profiler.dump_profile()
                     cuda.profile_stop()
                     log.info('---------CUDA profile stopped---------')
+                    exit()
 	    # </EcoSys> 
 
             module.forward_backward(data_batch)
