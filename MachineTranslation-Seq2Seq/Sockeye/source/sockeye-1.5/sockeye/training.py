@@ -175,9 +175,9 @@ class TrainingModel(model.SockeyeModel):
             use_tensorboard: bool = False,
             mxmonitor_pattern: Optional[str] = None,
             # <EcoSys> Parametrizing profiler
-            profiler_epoch: int = -1,
-            profiler_start: int = 500,
-            profiler_stop: int = 600,
+            profiler_on: bool = False,
+            profiler_start: int = 4500,
+            profiler_stop: int = 4600,
             # </EcoSys>
             mxmonitor_stat_func: Optional[str] = None):
         """
@@ -251,7 +251,7 @@ class TrainingModel(model.SockeyeModel):
                   max_num_not_improved=max_num_not_improved,
                   min_num_epochs=min_num_epochs,
                   # <EcoSys> Parametrizing profiler
-                  profiler_epoch=profiler_epoch,
+                  profiler_on=profiler_on,
                   profiler_start=profiler_start,
                   profiler_stop=profiler_stop,
                   # </EcoSys>
@@ -274,9 +274,9 @@ class TrainingModel(model.SockeyeModel):
              max_num_not_improved: int,
              min_num_epochs: Optional[int] = None,
              # <EcoSys> Parametrizing profiler
-             profiler_epoch: int = -1,
-             profiler_start: int = 500,
-             profiler_stop: int = 600,
+             profiler_on: bool = False,
+             profiler_start: int = 4500,
+             profiler_stop: int = 4600,
              # </EcoSys>
              mxmonitor: Optional[mx.monitor.Monitor] = None):
         """
@@ -318,7 +318,7 @@ class TrainingModel(model.SockeyeModel):
         while max_updates == -1 or train_state.updates < max_updates:
 
             # <EcoSys> Added the profiler start and end point.
-            if train_state.epoch == profiler_epoch:
+            if profiler_on:
                 import numba.cuda as cuda
 
                 if train_state.updates == profiler_start:

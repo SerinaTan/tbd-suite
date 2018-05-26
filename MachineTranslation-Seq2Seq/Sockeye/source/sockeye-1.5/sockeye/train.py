@@ -420,7 +420,7 @@ def main():
                            use_tensorboard=args.use_tensorboard,
                            mxmonitor_pattern=args.monitor_pattern,
                            # <EcoSys> Parametrizing profiler
-                           profiler_epoch=args.profiler_epoch,
+                           profiler_on=args.profiler_on,
                            profiler_start=args.profiler_start,
                            profiler_stop=args.profiler_stop,
                            # </EcoSys>

@@ -569,11 +569,11 @@ def add_training_args(params):
 def add_profiling_args(params):
     decode_params = params.add_argument_group("Profiling parameters")
 
-    decode_params.add_argument("--profiler-epoch", default=-1,
-                                help='Epoch on which profiler need to be started')
-    decode_params.add_argument("--profiler-start", default=500,
+    decode_params.add_argument("--profiler-on", default=False, type=bool,
+                                help='Turn on profiler')
+    decode_params.add_argument("--profiler-start", default=4500,
                                 help='Batch on which profiler need to be started')
-    decode_params.add_argument("--profiler-stop", default=600,
+    decode_params.add_argument("--profiler-stop", default=4600,
                                 help='Batch on which profiler need to be stopped')
 # </EcoSys>
 
