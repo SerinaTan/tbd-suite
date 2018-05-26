@@ -571,9 +571,9 @@ def add_profiling_args(params):
 
     decode_params.add_argument("--profiler-on", default=False, type=bool,
                                 help='Turn on profiler')
-    decode_params.add_argument("--profiler-start", default=4500,
+    decode_params.add_argument("--profiler-start", default=4500, type=int,
                                 help='Batch on which profiler need to be started')
-    decode_params.add_argument("--profiler-stop", default=4600,
+    decode_params.add_argument("--profiler-stop", default=4600, type=int,
                                 help='Batch on which profiler need to be stopped')
 # </EcoSys>
 
