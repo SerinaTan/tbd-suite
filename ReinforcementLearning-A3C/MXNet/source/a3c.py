@@ -27,6 +27,8 @@ import gym
 from datetime import datetime
 import time
 import sys
+from os.path import expanduser
+import platform as plt
 
 # <EcoSys> Added profiling import.
 import numba.cuda as cuda
@@ -142,6 +144,10 @@ def train():
     module.init_optimizer(kvstore=kv, optimizer='adam',
                           optimizer_params={'learning_rate': args.lr, 'wd': args.wd, 'epsilon': 1e-3})
 
+    # Profiling
+    logfile = expanduser("~")+"/profiler-"+str(plt.node())+".json"
+    mx.profiler.profiler_set_config(mode='all', filename=logfile)
+
     # logging
     np.set_printoptions(precision=3, suppress=True)
 
@@ -163,8 +169,11 @@ def train():
             if iteration == args.profile_start:
                 print("Profile start.")
                 cuda.profile_start()
+                mx.profiler.profiler_set_state('run')
             elif iteration == args.profile_stop:
                 print("Calling profile_stop().")
+                mx.profiler.profiler_set_state('stop')
+                mx.profiler.dump_profile()
                 cuda.profile_stop()
                 print("Done calling profile_stop().")
             # </EcoSys>

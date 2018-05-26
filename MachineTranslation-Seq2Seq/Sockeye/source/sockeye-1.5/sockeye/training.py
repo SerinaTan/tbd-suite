@@ -25,6 +25,8 @@ from typing import AnyStr, List, Optional
 
 import mxnet as mx
 import numpy as np
+import platform as plt
+from os.path import expanduser
 
 from . import callback
 from . import checkpoint_decoder
@@ -310,6 +312,8 @@ class TrainingModel(model.SockeyeModel):
             )
 
         next_data_batch = train_iter.next()
+        logfile = expanduser("~")+"/profiler-"+str(plt.node())+".json"
+        mx.profiler.profiler_set_config(mode='all', filename=logfile)
 
         while max_updates == -1 or train_state.updates < max_updates:
 
@@ -319,7 +323,10 @@ class TrainingModel(model.SockeyeModel):
 
                 if train_state.updates == profiler_start:
                     cuda.profile_start()
+                    mx.profiler.profiler_set_state('run')
                 if train_state.updates == profiler_stop:
+                    mx.profiler.profiler_set_state('stop')
+                    mx.profiler.dump_profile()
                     cuda.profile_stop()
             # </EcoSys>
 

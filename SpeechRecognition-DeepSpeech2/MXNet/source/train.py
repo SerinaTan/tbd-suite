@@ -28,6 +28,8 @@ from tensorboardX import SummaryWriter
 # <EcoSys>
 import json
 from stt_bucketing_module import STTBucketingModule
+from os.path import expanduser
+import platform as plt
 
 # <EcoSys> Importing helper functions for CUDA profiling
 from numba import cuda
@@ -146,6 +148,10 @@ def do_training(args, module, data_train, data_val, begin_epoch=0):
     tblog_dir = args.config.get('common', 'tensorboard_log_dir')
     summary_writer = SummaryWriter(tblog_dir)
 
+    # Profiling
+    logfile = expanduser("~")+"/profiler-"+str(plt.node())+".json"
+    mx.profiler.profiler_set_config(mode='all', filename=logfile)
+
     while True:
 
         # <EcoSys> Throughput calculation
@@ -166,9 +172,12 @@ def do_training(args, module, data_train, data_val, begin_epoch=0):
                 if nbatch == args.config.getint('common', 'prof_start_batch'):
                     log.info('---------CUDA profile starting---------')
                     cuda.profile_start()
+                    mx.profiler.profiler_set_state('run')
                     log.info('---------CUDA profile started---------')
                 if nbatch == args.config.getint('common', 'prof_stop_batch'):
                     log.info('---------CUDA profile stopping---------')
+                    mx.profiler.profiler_set_state('stop')
+                    mx.profiler.dump_profile()
                     cuda.profile_stop()
                     log.info('---------CUDA profile stopped---------')
 	    # </EcoSys> 

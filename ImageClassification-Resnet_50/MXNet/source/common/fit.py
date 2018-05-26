@@ -20,6 +20,8 @@ import logging
 import os
 import time
 import util
+from os.path import expanduser
+import platform as plt
 
 def _get_lr_scheduler(args, kv):
     if 'lr_factor' not in args or args.lr_factor >= 1:
@@ -207,6 +209,8 @@ def fit(args, network, data_loader, **kwargs):
     batch_end_callbacks = [mx.callback.Speedometer(args.batch_size, args.disp_batches)]
 # <EcoSys> add nvprof start/stop callbacks
     if args.nvprof_on:
+        logfile = expanduser("~")+"/profiler-"+str(plt.node())+".json"
+        mx.profiler.profiler_set_config(mode='all', filename=logfile)
         batch_end_callbacks.append(util.cudaProfilerStart(args.nvprof_start_batch, args.nvprof_start_epoch))
         batch_end_callbacks.append(util.cudaProfilerStop(args.nvprof_stop_batch, args.nvprof_stop_epoch))
 # </EcoSys>

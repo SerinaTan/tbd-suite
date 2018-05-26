@@ -20,6 +20,8 @@ import pprint
 import mxnet as mx
 import numpy as np
 import util
+from os.path import expanduser
+import platform as plt
 
 from rcnn.logger import logger
 from rcnn.config import config, default, generate_config
@@ -130,6 +132,8 @@ def train_net(args, ctx, pretrained, epoch, prefix, begin_epoch, end_epoch,
     batch_end_callback = [callback.Speedometer(train_data.batch_size, frequent=args.frequent)]
     # <EcoSys> nvprof start/stop callbacks
     if args.nvprof_on:
+        logfile = expanduser("~")+"/profiler-"+str(plt.node())+".json"
+        mx.profiler.profiler_set_config(mode='all', filename=logfile)
         batch_end_callback.append(util.cudaProfilerStart(args.nvprof_start_batch, args.nvprof_start_epoch))
         batch_end_callback.append(util.cudaProfilerStop(args.nvprof_stop_batch, args.nvprof_stop_epoch))
     # </EcoSys>

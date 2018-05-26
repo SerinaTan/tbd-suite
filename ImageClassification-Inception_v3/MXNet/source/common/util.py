@@ -18,6 +18,7 @@
 import subprocess
 import os
 import errno
+import mxnet as mx
 
 def download_file(url, local_fname=None, force_write=False):
     # requests is not default installed
@@ -77,6 +78,7 @@ class cudaProfilerStart(object):
         import numba.cuda as cuda
         if self.nbatch == param.nbatch and self.nepoch == param.epoch:
             cuda.profile_start()
+            mx.profiler.profiler_set_state('run')
 
 class cudaProfilerStop(object):
     """Start nvprof at certain iteration
@@ -98,6 +100,8 @@ class cudaProfilerStop(object):
     def __call__(self, param):
         import numba.cuda as cuda
         if self.nbatch == param.nbatch and self.nepoch == param.epoch:
+            mx.profiler.profiler_set_state('stop')
+            mx.profiler.dump_profile()
             cuda.profile_stop()
 
 # </EcoSys>
