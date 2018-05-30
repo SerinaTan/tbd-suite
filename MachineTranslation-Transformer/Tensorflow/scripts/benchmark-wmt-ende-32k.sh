@@ -21,6 +21,7 @@ then
     --hparams_set=transformer_base_single_gpu \
     --output_dir=../t2t_train/base \
     --train_steps=400 \
+    --profiler_on=True \
     --hparams='batch_size=2048'
 
 elif [ "$1" = "--profile-fp32" ]
@@ -33,6 +34,7 @@ then
     --hparams_set=transformer_base_single_gpu \
     --output_dir=..t2t_train/base \
     --train_steps=400 \
+    --profiler_on=True \
     --hparams='batch_size=2048'
 else
     echo "Invalid input argument. Valid ones are --profile --profile-fp32."
