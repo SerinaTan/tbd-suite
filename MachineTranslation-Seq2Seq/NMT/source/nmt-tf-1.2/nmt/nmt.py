@@ -297,6 +297,11 @@ def create_hparams(flags):
       metrics=flags.metrics.split(","),
       log_device_placement=flags.log_device_placement,
       random_seed=flags.random_seed,
+
+      # Profiler
+      profiler_on=flags.profiler_on,
+      profiler_start=flags.profiler_start,
+      profiler_stop=flags.profiler_stop,
   )
 
 

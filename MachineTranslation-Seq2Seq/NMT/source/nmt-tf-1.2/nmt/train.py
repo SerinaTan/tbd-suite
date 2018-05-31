@@ -357,12 +357,13 @@ def train(hparams, scope=None, target_session="", single_cell_fn=None):
   while global_step < num_train_steps:
 
     # <EcoSys> Added the profiler start and end point.
-    import numba.cuda as cuda
+    if hparams.profiler_on is not None:
+        import numba.cuda as cuda
 
-    if global_step == 501:
-      cuda.profile_start()
-    if global_step == 511:
-      cuda.profile_stop()
+        if global_step == hparams.profile_start:
+            cuda.profile_start()
+        if global_step == hparams.profile_stop:
+            cuda.profile_stop()
     # </EcoSys>
 
     ### Run a step ###
