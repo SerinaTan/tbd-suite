@@ -364,6 +364,7 @@ def train(hparams, scope=None, target_session="", single_cell_fn=None):
             cuda.profile_start()
         if global_step == hparams.profile_stop:
             cuda.profile_stop()
+            exit()
     # </EcoSys>
 
     ### Run a step ###

@@ -25,5 +25,6 @@ class ProfileMonitor(tf.contrib.learn.monitors.EveryN):
 			self.ended = True
 			cuda.profile_stop()
 			print("Done calling profile_stop().")
+                        exit()
 
 # </EcoSys>

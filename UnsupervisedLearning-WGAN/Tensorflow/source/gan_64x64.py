@@ -628,6 +628,7 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
                 print("Calling profile_stop().")
                 cuda.profile_stop()
                 print("Done calling profile_stop().")
+                exit()
 	# </EcoSys>
 
         # Train generator
