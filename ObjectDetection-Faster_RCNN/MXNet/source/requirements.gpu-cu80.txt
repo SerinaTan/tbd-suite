@@ -5,3 +5,4 @@ easydict
 matplotlib
 opencv-python
 future
+numba
