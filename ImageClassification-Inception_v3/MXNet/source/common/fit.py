@@ -211,8 +211,8 @@ def fit(args, network, data_loader, **kwargs):
     if args.nvprof_on:
         logfile = expanduser("~")+"/profiler-"+str(plt.node())+".json"
         mx.profiler.profiler_set_config(mode='all', filename=logfile)
-        batch_end_callbacks += util.cudaProfilerStart(args.nvprof_start_batch, args.nvprof_start_epoch)
-        batch_end_callbacks += util.cudaProfilerStop(args.nvprof_stop_batch, args.nvprof_stop_epoch)
+        batch_end_callbacks.append(util.cudaProfilerStart(args.nvprof_start_batch, args.nvprof_start_epoch))
+        batch_end_callbacks.append(util.cudaProfilerStop(args.nvprof_stop_batch, args.nvprof_stop_epoch))
 # </EcoSys>
     if 'batch_end_callback' in kwargs:
         cbs = kwargs['batch_end_callback']
