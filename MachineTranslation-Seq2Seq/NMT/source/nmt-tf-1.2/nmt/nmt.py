@@ -227,6 +227,14 @@ def add_arguments(parser):
   parser.add_argument("--num_workers", type=int, default=1,
                       help="Number of workers (inference only).")
 
+  # Job info
+  parser.add_argument("--profiler_on", type=bool, default=True,
+                      help="Turn on profiling")
+  parser.add_argument("--profiler_start", type=int, default=7400,
+                      help="Start profiling at")
+  parser.add_argument("--profiler_stop", type=int, default=7450,
+                      help="Stop profiling at")
+
 
 def create_hparams(flags):
   """Create training hparams."""

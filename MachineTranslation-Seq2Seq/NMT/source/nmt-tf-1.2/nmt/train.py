@@ -357,13 +357,15 @@ def train(hparams, scope=None, target_session="", single_cell_fn=None):
   while global_step < num_train_steps:
 
     # <EcoSys> Added the profiler start and end point.
-    if hparams.profiler_on is not None:
+    if hparams.profiler_on:
         import numba.cuda as cuda
 
         if global_step == hparams.profiler_start:
             cuda.profile_start()
+            utils.print_out("########### Profiler started ###########")
         if global_step == hparams.profiler_stop:
             cuda.profile_stop()
+            utils.print_out("########### Profiler stopped ###########")
             exit()
     # </EcoSys>
 
