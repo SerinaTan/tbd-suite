@@ -360,9 +360,9 @@ def train(hparams, scope=None, target_session="", single_cell_fn=None):
     if hparams.profiler_on is not None:
         import numba.cuda as cuda
 
-        if global_step == hparams.profile_start:
+        if global_step == hparams.profiler_start:
             cuda.profile_start()
-        if global_step == hparams.profile_stop:
+        if global_step == hparams.profiler_stop:
             cuda.profile_stop()
             exit()
     # </EcoSys>
