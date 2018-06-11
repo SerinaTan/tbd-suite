@@ -574,7 +574,7 @@ def main(_):
         step = train_step
     else:
         kwargs = 0
-        step = slim.learning.train_step
+        step = train_step
 # </EcoSys>
 
     ###########################
