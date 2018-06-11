@@ -60,8 +60,8 @@ def train_step(sess, train_op, global_step, train_step_kwargs):
 
   if 'should_log' in train_step_kwargs:
     if sess.run(train_step_kwargs['should_log']):
-      logging.info('global step %d: loss = %.4f (%.3f sec/step)',
-                   np_global_step, total_loss, time_elapsed)
+      logging.info('[%f] global step %d: loss = %.4f (%.3f sec/step)',
+                   time.time(), np_global_step, total_loss, time_elapsed)
 
   # TODO(nsilberman): figure out why we can't put this into sess.run. The
   # issue right now is that the stop check depends on the global step. The
