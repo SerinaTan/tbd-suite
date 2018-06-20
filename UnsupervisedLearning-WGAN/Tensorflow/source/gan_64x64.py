@@ -56,7 +56,7 @@ def GeneratorAndDiscriminator():
     """
 
     # For actually generating decent samples, use this one
-    return GoodGenerator, GoodDiscriminator
+    # return GoodGenerator, GoodDiscriminator
 
     # Baseline (G: DCGAN, D: DCGAN)
     # return DCGANGenerator, DCGANDiscriminator
@@ -78,7 +78,7 @@ def GeneratorAndDiscriminator():
     #        functools.partial(DCGANDiscriminator, bn=True, nonlinearity=tf.tanh)
 
     # 101-layer ResNet G and D
-    # return ResnetGenerator, ResnetDiscriminator
+    return ResnetGenerator, ResnetDiscriminator
 
     raise Exception('You must choose an architecture!')
 
