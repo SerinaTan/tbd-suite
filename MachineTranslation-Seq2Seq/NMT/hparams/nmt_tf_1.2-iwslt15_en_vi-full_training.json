@@ -27,7 +27,7 @@
   "src_max_len": 100,
   "src_max_len_infer": null,
   "start_decay_step": 17000,
-  "steps_per_external_eval": 100,
+  "steps_per_external_eval": 2000,
   "steps_per_stats": 100,
   "tgt_max_len": 100,
   "tgt_max_len_infer": null,
