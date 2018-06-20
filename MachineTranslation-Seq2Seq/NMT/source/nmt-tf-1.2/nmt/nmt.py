@@ -228,7 +228,7 @@ def add_arguments(parser):
                       help="Number of workers (inference only).")
 
   # Job info
-  parser.add_argument("--profiler_on", type=bool, default=True,
+  parser.add_argument("--profiler_on", type=bool, default=False,
                       help="Turn on profiling")
   parser.add_argument("--profiler_start", type=int, default=7400,
                       help="Start profiling at")
