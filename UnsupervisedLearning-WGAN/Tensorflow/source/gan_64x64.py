@@ -30,7 +30,7 @@ OUTPUT_DIR = '../output/'
 if len(DATA_DIR) == 0:
     raise Exception('Please specify path to data directory in gan_64x64.py!')
 
-BATCH_SIZE = 64 # Batch size. Must be a multiple of N_GPUS.
+BATCH_SIZE = 32 # Batch size. Must be a multiple of N_GPUS.
 MODE = 'wgan-gp' # dcgan, wgan, wgan-gp, lsgan
 DIM = 64 # Model dimensionality
 CRITIC_ITERS = 5 # How many iterations to train the critic for
