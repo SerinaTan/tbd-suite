@@ -575,7 +575,10 @@ def add_profiling_args(params):
                                 help='Batch on which profiler need to be started')
     decode_params.add_argument("--profiler-stop", default=4600, type=int,
                                 help='Batch on which profiler need to be stopped')
+    decode_params.add_argument("--kv-store", default="device", type=str,
+                                help='kv store')
 # </EcoSys>
+
 
 
 def add_inference_args(params):

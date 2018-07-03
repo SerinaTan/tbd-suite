@@ -178,6 +178,7 @@ class TrainingModel(model.SockeyeModel):
             profiler_on: bool = False,
             profiler_start: int = 4500,
             profiler_stop: int = 4600,
+            kvs: str = "device",
             # </EcoSys>
             mxmonitor_stat_func: Optional[str] = None):
         """
@@ -218,7 +219,7 @@ class TrainingModel(model.SockeyeModel):
         self.module.init_params(initializer=initializer, arg_params=self.params, aux_params=None,
                                 allow_missing=False, force_init=False)
 
-        self.module.init_optimizer(kvstore='device', optimizer=optimizer, optimizer_params=optimizer_params)
+        self.module.init_optimizer(kvstore=kvs, optimizer=optimizer, optimizer_params=optimizer_params)
 
         cp_decoder = checkpoint_decoder.CheckpointDecoder(self.context[-1],
                                                           self.config.config_data.validation_source,

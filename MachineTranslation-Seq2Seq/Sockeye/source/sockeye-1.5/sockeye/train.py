@@ -423,6 +423,7 @@ def main():
                            profiler_on=args.profiler_on,
                            profiler_start=args.profiler_start,
                            profiler_stop=args.profiler_stop,
+                           kvs=args.kv_store,
                            # </EcoSys>
                            mxmonitor_stat_func=args.monitor_stat_func)
 
