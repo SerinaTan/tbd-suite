@@ -29,13 +29,13 @@ DATA_DIR = '/home/ishaan/data/cifar10'
 if len(DATA_DIR) == 0:
     raise Exception('Please specify path to data directory in gan_cifar.py!')
 
-N_GPUS = 2
+N_GPUS = 1
 if N_GPUS not in [1,2]:
     raise Exception('Only 1 or 2 GPUs supported!')
 
-BATCH_SIZE = 64 # Critic batch size
+BATCH_SIZE = 32 # Critic batch size
 GEN_BS_MULTIPLE = 2 # Generator batch size, as a multiple of BATCH_SIZE
-ITERS = 100000 # How many iterations to train for
+ITERS = 200000 # How many iterations to train for
 DIM_G = 128 # Generator dimensionality
 DIM_D = 128 # Critic dimensionality
 NORMALIZATION_G = True # Use batchnorm in generator?
