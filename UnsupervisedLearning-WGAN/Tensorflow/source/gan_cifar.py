@@ -19,15 +19,16 @@ import tflib.plot
 # Download CIFAR-10 (Python version) at
 # https://www.cs.toronto.edu/~kriz/cifar.html and fill in the path to the
 # extracted files here!
-DATA_DIR = ''
+DATA_DIR = '../cifar-10/'
+OUTPUT_DIR = '../output/'
 if len(DATA_DIR) == 0:
     raise Exception('Please specify path to data directory in gan_cifar.py!')
 
 MODE = 'wgan-gp' # Valid options are dcgan, wgan, or wgan-gp
-DIM = 128 # This overfits substantially; you're probably better off with 64
+DIM = 64 # This overfits substantially; you're probably better off with 64
 LAMBDA = 10 # Gradient penalty lambda hyperparameter
 CRITIC_ITERS = 5 # How many critic iterations per generator iteration
-BATCH_SIZE = 64 # Batch size
+BATCH_SIZE = 32 # Batch size
 ITERS = 200000 # How many generator iterations to train for
 OUTPUT_DIM = 3072 # Number of pixels in CIFAR10 (3*32*32)
 
@@ -154,7 +155,7 @@ fixed_noise_samples_128 = Generator(128, noise=fixed_noise_128)
 def generate_image(frame, true_dist):
     samples = session.run(fixed_noise_samples_128)
     samples = ((samples+1.)*(255./2)).astype('int32')
-    lib.save_images.save_images(samples.reshape((128, 3, 32, 32)), 'samples_{}.jpg'.format(frame))
+    lib.save_images.save_images(samples.reshape((128, 3, 32, 32)), OUTPUT_DIR + 'samples_{}.jpg'.format(frame))
 
 # For calculating inception score
 samples_100 = Generator(100)
@@ -179,6 +180,7 @@ with tf.Session() as session:
     session.run(tf.initialize_all_variables())
     gen = inf_train_gen()
 
+    prev_iter = 0
     for iteration in xrange(ITERS):
         start_time = time.time()
         # Train generator
@@ -197,6 +199,8 @@ with tf.Session() as session:
 
         lib.plot.plot('train disc cost', _disc_cost)
         lib.plot.plot('time', time.time() - start_time)
+        lib.plot.plot('throughput', BATCH_SIZE*(iteration-prev_iter)/(time.time() - start_time))
+        prev_iter = iteration
 
         # Calculate inception score every 1K iters
         if iteration % 1000 == 999:
@@ -214,6 +218,6 @@ with tf.Session() as session:
 
         # Save logs every 100 iters
         if (iteration < 5) or (iteration % 100 == 99):
-            lib.plot.flush()
+            lib.plot.flush(OUTPUT_DIR)
 
         lib.plot.tick()

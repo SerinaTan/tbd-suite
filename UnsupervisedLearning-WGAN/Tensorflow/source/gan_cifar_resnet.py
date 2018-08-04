@@ -25,7 +25,8 @@ locale.setlocale(locale.LC_ALL, '')
 # Download CIFAR-10 (Python version) at
 # https://www.cs.toronto.edu/~kriz/cifar.html and fill in the path to the
 # extracted files here!
-DATA_DIR = '/home/ishaan/data/cifar10'
+DATA_DIR = '../cifar-10/'
+OUTPUT_DIR = '../output/'
 if len(DATA_DIR) == 0:
     raise Exception('Please specify path to data directory in gan_cifar.py!')
 
@@ -317,7 +318,7 @@ with tf.Session() as session:
     def generate_image(frame, true_dist):
         samples = session.run(fixed_noise_samples)
         samples = ((samples+1.)*(255./2)).astype('int32')
-        lib.save_images.save_images(samples.reshape((100, 3, 32, 32)), 'samples_{}.png'.format(frame))
+        lib.save_images.save_images(samples.reshape((100, 3, 32, 32)), OUTPUT_DIR + 'samples_{}.png'.format(frame))
 
     # Function for calculating inception score
     fake_labels_100 = tf.cast(tf.random_uniform([100])*10, tf.int32)
@@ -362,6 +363,7 @@ with tf.Session() as session:
 
     gen = inf_train_gen()
 
+    prev_iter = 0
     for iteration in xrange(ITERS):
         start_time = time.time()
 
@@ -382,6 +384,8 @@ with tf.Session() as session:
             lib.plot.plot('acc_real', _disc_acgan_acc)
             lib.plot.plot('acc_fake', _disc_acgan_fake_acc)
         lib.plot.plot('time', time.time() - start_time)
+        lib.plot.plot('throughput', BATCH_SIZE*(iteration-prev_iter)/(time.time() - start_time))
+        prev_iter = iteration
 
         if iteration % INCEPTION_FREQUENCY == INCEPTION_FREQUENCY-1:
             inception_score = get_inception_score(50000)
@@ -399,6 +403,6 @@ with tf.Session() as session:
             generate_image(iteration, _data)
 
         if (iteration < 500) or (iteration % 1000 == 999):
-            lib.plot.flush()
+            lib.plot.flush(OUTPUT_DIR)
 
         lib.plot.tick()
