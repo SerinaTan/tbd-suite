@@ -20,7 +20,6 @@ class cudaProfilerStart(object):
 
     def __call__(self, param):
         import numba.cuda as cuda
-        print("try start", param.nbatch)
         if self.nbatch == param.nbatch and self.nepoch == param.epoch:
             cuda.profile_start()
             mx.profiler.profiler_set_state('run')
