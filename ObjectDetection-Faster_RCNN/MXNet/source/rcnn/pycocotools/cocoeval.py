@@ -21,7 +21,7 @@ import numpy as np
 import datetime
 import time
 from collections import defaultdict
-import mask as maskUtils
+from . import mask as maskUtils
 import copy
 
 class COCOeval:

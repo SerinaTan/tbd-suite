@@ -666,7 +666,7 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
 
         if (iteration < 5) or (iteration % 5 == 4):
             # <EcoSys> Makes use of OUTPUT_DIR argument.
-	    lib.plot.flush(OUTPUT_DIR)
+            lib.plot.flush(OUTPUT_DIR)
 	    # </EcoSys>
 
         lib.plot.tick()

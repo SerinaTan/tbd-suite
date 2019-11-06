@@ -273,7 +273,7 @@ class TransformerDecoder(Decoder):
         # append/insert prev_word_id to sequences
         # (batch_size, target_max_length)
         sequences = sequences + prev_word_id
-        lengths += 1
+        lengths = (lengths + 1)
 
         # (1, target_max_length, target_max_length)
         target_bias = transformer.get_autoregressive_bias(target_max_length, name="%sbias" % self.prefix)
