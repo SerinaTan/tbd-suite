@@ -1,4 +1,5 @@
-DATASET_DIR=... # path to your TFRecords folder
+DATASET_DIR=/docker_home/datasets/imagenet/tensorflow
+ROC_INDIR=/docker_home/tbd-suite/rocprof_input
 TRAIN_DIR=./log
 
 if [ "$1" = "" ]
@@ -9,23 +10,16 @@ then
 elif [ "$1" = "--profile" ]
 then
         mkdir -p measurements
-        PREFIX="/usr/local/cuda/bin/nvprof --profile-from-start off \
-                --export-profile measurements/resnet50-tensorflow.nvvp -f --print-summary"
-        SUFFIX=" --nvprof_on=True"
-
-elif [ "$1" = "--profile-fp32" ]
-then
-        mkdir -p measurements
-        PREFIX="/usr/local/cuda/bin/nvprof --profile-from-start off \
-                --export-profile measurements/resnet50-tensorflow-fp32.nvvp -f \
-                --metrics single_precision_fu_utilization"
-        SUFFIX=" --nvprof_on=True"
-
+#        PREFIX="/usr/local/cuda/bin/nvprof --profile-from-start off \
+#                --export-profile measurements/resnet50-tensorflow.nvvp -f --print-summary"
+#        SUFFIX=" --nvprof_on=True"
+        PREFIX="rocprof -i $ROC_INDIR/util.txt"
+        SUFFIX=""
 else
-        echo "Invalid input argument. Valid ones are --profile/--profile-fp32."; exit -1
+        echo "Invalid input argument. Valid ones are --profile."; exit -1
 fi
 
-$PREFIX python ../source/train_image_classifier.py --train_dir=$TRAIN_DIR --dataset_dir=$DATASET_DIR \
+$PREFIX python3 ../source/train_image_classifier.py --train_dir=$TRAIN_DIR --dataset_dir=$DATASET_DIR \
 	--model_name=resnet_v2_50 --optimizer=sgd --batch_size=32 \
 	--learning_rate=0.1 --learning_rate_decay_factor=0.1 --num_epochs_per_decay=30 \
 	--weight_decay=0.0001 $SUFFIX
